@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { router } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { z } from "zod";
@@ -67,24 +68,28 @@ export default function LoginForm() {
   });
 
   const onSubmit = (data: z.infer<typeof schema>) => {
-    console.log("Form submitted:", data);
+    const { firstName, lastName, email } = data;
+    console.log("Form submitted:", { firstName, lastName, email });
+    router.push({
+      pathname: "/confirmation",
+      params: { firstName },
+    });
   };
 
   return (
     <View style={styles.container}>
-      <Text>Create Account</Text>
-      <View>
-        <Text>First Name</Text>
+      <Text style={styles.title}>Create Account</Text>
+      <View style={styles.fieldGroup}>
+        <Text style={styles.label}>First Name</Text>
         <Controller
           control={control}
           name="firstName"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              //   style={styles.input}
+              style={styles.input}
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
-              placeholder="John"
             />
           )}
         />
@@ -93,18 +98,17 @@ export default function LoginForm() {
         )}
       </View>
 
-      <View>
-        <Text>Last Name</Text>
+      <View style={styles.fieldGroup}>
+        <Text style={styles.label}>Last Name</Text>
         <Controller
           control={control}
           name="lastName"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              //   style={styles.input}
+              style={styles.input}
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
-              placeholder="Doe"
             />
           )}
         />
@@ -113,20 +117,19 @@ export default function LoginForm() {
         )}
       </View>
 
-      <View>
-        <Text>Email</Text>
+      <View style={styles.fieldGroup}>
+        <Text style={styles.label}>Email</Text>
         <Controller
           control={control}
           name="email"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              // style={styles.}
+              style={styles.input}
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
               keyboardType="email-address"
               autoCapitalize="none"
-              placeholder="johndoe@example.ca"
             />
           )}
         />
@@ -134,14 +137,14 @@ export default function LoginForm() {
           <Text style={styles.errorText}>{errors.email.message}</Text>
         )}
       </View>
-      <View>
-        <Text>Password</Text>
+      <View style={styles.fieldGroup}>
+        <Text style={styles.label}>Password</Text>
         <Controller
           control={control}
           name="password"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              // style={styles.}
+              style={styles.input}
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
@@ -153,14 +156,14 @@ export default function LoginForm() {
           <Text style={styles.errorText}>{errors.password.message}</Text>
         )}
       </View>
-      <View>
-        <Text>Confirm Password</Text>
+      <View style={styles.fieldGroup}>
+        <Text style={styles.label}>Confirm Password</Text>
         <Controller
           control={control}
           name="confirmPassword"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
-              // style={styles.}
+              style={styles.input}
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
@@ -172,12 +175,15 @@ export default function LoginForm() {
           <Text style={styles.errorText}>{errors.confirmPassword.message}</Text>
         )}
       </View>
-      <View>
-        <Pressable onPress={() => void handleSubmit(onSubmit)()}>
-          <Text>Sign Up</Text>
+      <View style={styles.actions}>
+        <Pressable
+          style={styles.primaryButton}
+          onPress={() => void handleSubmit(onSubmit)()}
+        >
+          <Text style={styles.primaryButtonText}>Sign Up</Text>
         </Pressable>
-        <Pressable onPress={() => reset()}>
-          <Text>Reset</Text>
+        <Pressable style={styles.secondaryButton} onPress={() => reset()}>
+          <Text style={styles.secondaryButtonText}>Reset</Text>
         </Pressable>
       </View>
     </View>
@@ -186,9 +192,82 @@ export default function LoginForm() {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    width: "100%",
+    maxWidth: 520,
+    alignSelf: "center",
+    padding: 24,
+    marginVertical: 20,
+  },
+  title: {
+    marginBottom: 24,
+    color: "#E76814",
+    fontSize: 28,
+    fontWeight: "700",
+    textAlign: "center",
+    letterSpacing: 0.3,
+  },
+  fieldGroup: {
+    marginBottom: 16,
+  },
+  label: {
+    marginBottom: 7,
+    color: "#714236",
+    fontSize: 15,
+    fontWeight: "600",
+  },
+  input: {
+    minHeight: 48,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderWidth: 1,
+    borderColor: "#DC8236",
+    borderRadius: 12,
+    backgroundColor: "#FFFFFF",
+    color: "#714236",
+    fontSize: 16,
   },
   errorText: {
-    color: "red",
+    color: "#891A10",
+    marginTop: 6,
+    fontSize: 13,
+  },
+  actions: {
+    flexDirection: "row",
+    gap: 12,
+    marginTop: 8,
+  },
+  primaryButton: {
+    flex: 1,
+    minHeight: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    backgroundColor: "#891A10",
+  },
+  primaryButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "700",
+    letterSpacing: 0.3,
+  },
+  secondaryButton: {
+    minHeight: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 20,
+    borderWidth: 1.5,
+    borderColor: "#B8210F",
+    borderRadius: 12,
+    backgroundColor: "#FFFFFF",
+  },
+  secondaryButtonText: {
+    color: "#B8210F",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  buttonPressed: {
+    opacity: 0.78,
+    transform: [{ scale: 0.98 }],
   },
 });
